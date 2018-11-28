@@ -13,8 +13,14 @@ import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PackageFilter {
+    private PackageFilter() {}
+
+    private static final Logger logger = LoggerFactory.getLogger(PackageFilter.class);
+
     public static <T> List<Class<T>> getClasses(Class<T> clazz, String pkg, boolean recursive, boolean keepInterfaces, boolean keepAbstracts, String... excludePackages) {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
@@ -33,24 +39,19 @@ public class PackageFilter {
             excludeString = String.join(", ", excludePackages);
         }
 
-        Reflections ref = null;
-        try {
-            ConfigurationBuilder config = new ConfigurationBuilder()
-                    .setScanners(new SubTypesScanner(false),
-                            new ResourcesScanner(),
-                            new TypeElementsScanner())
-                    .setUrls(ClasspathHelper.forPackage(pkg));
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false),
+                        new ResourcesScanner(),
+                        new TypeElementsScanner())
+                .setUrls(ClasspathHelper.forPackage(pkg, PackageFilter.class.getClassLoader()));
 
-            if (excludeString != null) {
-                config = config.filterInputsBy(FilterBuilder.parsePackages(excludeString).include(FilterBuilder.prefix(pkg)));
-            } else {
-                config = config.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(pkg)));
-            }
-
-            ref = new Reflections(config);
-        } catch (Exception ex) {
-            return new ArrayList<>();
+        if (excludeString != null) {
+            config = config.filterInputsBy(FilterBuilder.parsePackages(excludeString).include(FilterBuilder.prefix(pkg)));
+        } else {
+            config = config.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(pkg)));
         }
+
+        Reflections ref = new Reflections(config);
 
         Set<String> typeSet = ref.getStore().get("TypeElementsScanner").keySet();
         Set<Class<?>> set = Sets.newHashSet(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
@@ -108,24 +109,19 @@ public class PackageFilter {
             excludeString = String.join(", ", excludePackages);
         }
 
-        Reflections ref = null;
-        try {
-            ConfigurationBuilder config = new ConfigurationBuilder()
-                    .setScanners(new SubTypesScanner(false),
-                            new ResourcesScanner(),
-                            new TypeElementsScanner())
-                    .setUrls(ClasspathHelper.forPackage(pkg));
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false),
+                        new ResourcesScanner(),
+                        new TypeElementsScanner())
+                .setUrls(ClasspathHelper.forPackage(pkg, PackageFilter.class.getClassLoader()));
 
-            if (excludeString != null) {
-                config = config.filterInputsBy(FilterBuilder.parsePackages(excludeString).include(FilterBuilder.prefix(pkg)));
-            } else {
-                config = config.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(pkg)));
-            }
-
-            ref = new Reflections(config);
-        } catch (Exception ex) {
-            return new ArrayList<>();
+        if (excludeString != null) {
+            config = config.filterInputsBy(FilterBuilder.parsePackages(excludeString).include(FilterBuilder.prefix(pkg)));
+        } else {
+            config = config.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(pkg)));
         }
+
+        Reflections ref = new Reflections(config);
 
         Set<String> typeSet = ref.getStore().get("TypeElementsScanner").keySet();
         Set<Class<?>> set = Sets.newHashSet(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
