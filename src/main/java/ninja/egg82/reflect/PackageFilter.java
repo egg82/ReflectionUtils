@@ -21,6 +21,10 @@ public class PackageFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(PackageFilter.class);
 
+    static {
+        Reflections.log = logger;
+    }
+
     public static <T> List<Class<T>> getClasses(Class<T> clazz, String pkg, boolean recursive, boolean keepInterfaces, boolean keepAbstracts, String... excludePackages) {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
@@ -28,8 +32,6 @@ public class PackageFilter {
         if (pkg == null) {
             throw new IllegalArgumentException("pkg cannot be null.");
         }
-
-        Reflections.log = null;
 
         String excludeString = null;
         if (excludePackages != null && excludePackages.length > 0) {
@@ -98,8 +100,6 @@ public class PackageFilter {
         if (pkg == null) {
             throw new IllegalArgumentException("pkg cannot be null.");
         }
-
-        Reflections.log = null;
 
         String excludeString = null;
         if (excludePackages != null && excludePackages.length > 0) {

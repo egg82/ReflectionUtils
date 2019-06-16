@@ -18,7 +18,7 @@ public class ClassFilter {
         }
 
         Field[] fields = clazz.getDeclaredFields();
-        List<Object> returns = new ArrayList<Object>();
+        List<Object> returns = new ArrayList<>();
 
         for (int i = 0; i < fields.length; i++) {
             if (!Modifier.isPrivate(fields[i].getModifiers())) {
