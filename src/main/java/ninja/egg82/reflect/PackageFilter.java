@@ -21,10 +21,6 @@ public class PackageFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(PackageFilter.class);
 
-    static {
-        Reflections.log = logger;
-    }
-
     public static <T> List<Class<T>> getClasses(Class<T> clazz, String pkg, boolean recursive, boolean keepInterfaces, boolean keepAbstracts, String... excludePackages) {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null.");
@@ -61,9 +57,11 @@ public class PackageFilter {
 
         for (Class<?> next : set) {
             if (!keepInterfaces && next.isInterface()) {
+                logger.debug("Excluding interface " + next.getName());
                 continue;
             }
             if (!keepAbstracts && Modifier.isAbstract(next.getModifiers())) {
+                logger.debug("Excluding abstract " + next.getName());
                 continue;
             }
 
@@ -71,6 +69,7 @@ public class PackageFilter {
             n = n.substring(n.indexOf('.') + 1);
 
             if (n.contains("$")) {
+                logger.debug("Excluding partial " + next.getName());
                 continue;
             }
 
@@ -79,14 +78,17 @@ public class PackageFilter {
                 p = p.substring(0, p.lastIndexOf('.'));
 
                 if (!p.equalsIgnoreCase(pkg)) {
+                    logger.debug("Excluding sub-package class " + next.getName());
                     continue;
                 }
             }
 
             if (!clazz.equals(next) && !clazz.isAssignableFrom(next)) {
+                logger.debug("Excluding non-assignable " + next.getName());
                 continue;
             }
 
+            logger.debug("Adding " + next.getName());
             list.add((Class<T>) next);
         }
 
@@ -129,9 +131,11 @@ public class PackageFilter {
 
         for (Class<?> next : set) {
             if (!keepInterfaces && next.isInterface()) {
+                logger.debug("Excluding interface " + next.getName());
                 continue;
             }
             if (!keepAbstracts && Modifier.isAbstract(next.getModifiers())) {
+                logger.debug("Excluding abstract " + next.getName());
                 continue;
             }
 
@@ -139,6 +143,7 @@ public class PackageFilter {
             n = n.substring(n.indexOf('.') + 1);
 
             if (n.contains("$")) {
+                logger.debug("Excluding partial " + next.getName());
                 continue;
             }
 
@@ -147,14 +152,17 @@ public class PackageFilter {
                 p = p.substring(0, p.lastIndexOf('.'));
 
                 if (!p.equalsIgnoreCase(pkg)) {
+                    logger.debug("Excluding sub-package class " + next.getName());
                     continue;
                 }
             }
 
             if (!clazz.equals(next) && !clazz.isAssignableFrom(next)) {
+                logger.debug("Excluding non-assignable " + next.getName());
                 continue;
             }
 
+            logger.debug("Adding " + next.getName());
             list.add((Class<? extends T>) next);
         }
 
