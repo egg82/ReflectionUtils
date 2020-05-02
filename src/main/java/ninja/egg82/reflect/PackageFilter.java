@@ -1,8 +1,8 @@
 package ninja.egg82.reflect;
 
-import com.google.common.collect.Sets;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.reflections.ReflectionUtils;
@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PackageFilter {
-    private PackageFilter() {}
+    private PackageFilter() {
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(PackageFilter.class);
 
@@ -51,8 +52,8 @@ public class PackageFilter {
 
         Reflections ref = new Reflections(config);
 
-        Set<String> typeSet = ref.getStore().get("TypeElementsScanner").keySet();
-        Set<Class<?>> set = Sets.newHashSet(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
+        Set<String> typeSet = ref.getStore().keys("TypeElementsScanner");
+        Set<Class<?>> set = new HashSet<>(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
         ArrayList<Class<T>> list = new ArrayList<>();
 
         for (Class<?> next : set) {
@@ -125,8 +126,8 @@ public class PackageFilter {
 
         Reflections ref = new Reflections(config);
 
-        Set<String> typeSet = ref.getStore().get("TypeElementsScanner").keySet();
-        Set<Class<?>> set = Sets.newHashSet(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
+        Set<String> typeSet = ref.getStore().keys("TypeElementsScanner");
+        Set<Class<?>> set = new HashSet<>(ReflectionUtils.forNames(typeSet, ref.getConfiguration().getClassLoaders()));
         ArrayList<Class<? extends T>> list = new ArrayList<>();
 
         for (Class<?> next : set) {
